@@ -24,7 +24,6 @@ type CloneConfig struct {
 	ResourcePool string
 	Datastore    string
 	LinkedClone  bool
-	Annotation   string
 }
 
 type HardwareConfig struct {
