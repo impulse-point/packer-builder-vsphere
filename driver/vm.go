@@ -38,7 +38,7 @@ type HardwareConfig struct {
 	MemoryHotAddEnabled bool
 }
 
-type NetworkConfig struct{
+type NetworkConfig struct {
 	Network       string
 	NetworkCard   string
 }
@@ -458,26 +458,48 @@ func addDisk(_ *Driver, devices object.VirtualDeviceList, config *CreateConfig) 
 }
 
 func addNetwork(d *Driver, devices object.VirtualDeviceList, config *CreateConfig) (object.VirtualDeviceList, error) {
+	var network object.NetworkReference
+	if config.Network == "" {
+		h, err := d.FindHost(config.Host)
+		if err != nil {
+			return nil, err
+		}
+
+		i, err := h.Info("network")
+		if err != nil {
+			return nil, err
+		}
+
+		if len(i.Network) > 1 {
+			return nil, fmt.Errorf("Host has multiple networks. Specify it explicitly")
+		}
+
+		network = object.NewNetwork(d.client.Client, i.Network[0])
+	} else {
+		var err error
+		network, err = d.finder.Network(d.ctx, config.Network)
+		}
+
 	//network, err := d.finder.NetworkOrDefault(d.ctx, config.Network)
 	//if err != nil {
 	//	return nil, err
 	//}
 
 	// Remove multiple instances error
-	var networks []object.NetworkReference
-	var err error
-	if config.Network != "" {
-		networks, err = d.finder.NetworkList(d.ctx, config.Network)
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		networks, err = d.finder.NetworkList(d.ctx, "*")
-		if err != nil {
-			return nil, err
-		}
-	}
-	network := networks[0]
+	//var networks []object.NetworkReference
+	//var err error
+	//if config.Network != "" {
+	//	networks, err = d.finder.NetworkList(d.ctx, config.Network)
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//} else {
+	//	networks, err = d.finder.NetworkList(d.ctx, "*")
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//}
+	//network := networks[0]
 
 	backing, err := network.EthernetCardBackingInfo(d.ctx)
 	if err != nil {
