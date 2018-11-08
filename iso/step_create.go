@@ -29,6 +29,8 @@ type CreateConfig struct {
 	Networks []Network `mapstructure:"networks"`
 
 	USBController bool   `mapstructure:"usb_controller"`
+
+	Notes string `mapstructure:"notes"`
 }
 
 func ToNetworkConfig(o []Network) []driver.NetworkConfig {
@@ -93,6 +95,7 @@ func (s *StepCreateVM) Run(_ context.Context, state multistep.StateBag) multiste
 		USBController:       s.Config.USBController,
 		Version:             s.Config.Version,
 		Firmware:            s.Config.Firmware,
+		Annotation:          s.Config.Notes,
 	})
 	if err != nil {
 		state.Put("error", fmt.Errorf("error creating vm: %v", err))
