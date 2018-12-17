@@ -5,7 +5,7 @@ import (
 	"github.com/hashicorp/packer/helper/multistep"
 	"github.com/hashicorp/packer/packer"
 	"github.com/jetbrains-infra/packer-builder-vsphere/driver"
-	"strings"
+	// "strings"
 )
 
 type RunConfig struct {
@@ -21,22 +21,22 @@ func (s *StepRun) Run(_ context.Context, state multistep.StateBag) multistep.Ste
 	ui := state.Get("ui").(packer.Ui)
 	vm := state.Get("vm").(*driver.VirtualMachine)
 
-	if s.Config.BootOrder != "" {
-		ui.Say("Set boot order...")
-		order := strings.Split(s.Config.BootOrder, ",")
-		if err := vm.SetBootOrder(order); err != nil {
-			state.Put("error", err)
-			return multistep.ActionHalt
-		}
-	} else {
-		if s.SetOrder {
-			ui.Say("Set boot order temporary...")
-			if err := vm.SetBootOrder([]string{"disk", "cdrom"}); err != nil {
-				state.Put("error", err)
-				return multistep.ActionHalt
-			}
-		}
-	}
+	// if s.Config.BootOrder != "" {
+	// 	ui.Say("Set boot order...")
+	// 	order := strings.Split(s.Config.BootOrder, ",")
+	// 	if err := vm.SetBootOrder(order); err != nil {
+	// 		state.Put("error", err)
+	// 		return multistep.ActionHalt
+	// 	}
+	// } else {
+	// 	if s.SetOrder {
+	// 		ui.Say("Set boot order temporary...")
+	// 		if err := vm.SetBootOrder([]string{"disk", "cdrom"}); err != nil {
+	// 			state.Put("error", err)
+	// 			return multistep.ActionHalt
+	// 		}
+	// 	}
+	// }
 
 	ui.Say("Power on VM...")
 	err := vm.PowerOn()
